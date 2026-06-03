@@ -10,6 +10,7 @@
             --card-bg: #ffffff;
             --text-color: #2c3e50;
             --border-color: #e2e8f0;
+            --tooltip-bg: #1a202c;
         }
 
         body {
@@ -41,7 +42,7 @@
 
         .container {
             width: 100%;
-            max-width: 1000px;
+            max-width: 1100px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -51,7 +52,7 @@
         /* Top Filters Area */
         .filters-top {
             background-color: var(--card-bg);
-            padding: 20px 40px;
+            padding: 24px 30px;
             border-radius: 12px;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
             border: 1px solid var(--border-color);
@@ -60,7 +61,13 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 24px;
+            gap: 20px;
+        }
+
+        /* Tooltip Container Wrapper */
+        .filter-option-wrapper {
+            position: relative;
+            display: inline-block;
         }
 
         .filter-option {
@@ -68,14 +75,62 @@
             align-items: center;
             gap: 8px;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 0.95rem;
             user-select: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            background-color: #f1f5f9;
+            transition: background-color 0.2s;
+        }
+
+        .filter-option:hover {
+            background-color: #e2e8f0;
         }
 
         .filter-option input {
             cursor: pointer;
             width: 16px;
             height: 16px;
+            margin: 0;
+        }
+
+        /* Tooltip Text Customization */
+        .tooltip-text {
+            visibility: hidden;
+            width: 220px;
+            background-color: var(--tooltip-bg);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px 12px;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%; /* Positions tooltip directly above tag option */
+            left: 51%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.2s, visibility 0.2s;
+            font-size: 0.8rem;
+            line-height: 1.3;
+            pointer-events: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+        }
+
+        /* Small structural arrow for tooltip block */
+        .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--tooltip-bg) transparent transparent transparent;
+        }
+
+        .filter-option-wrapper:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
         }
 
         /* Class Grid Container */
@@ -118,65 +173,98 @@
 
     <header>
         <h1>BDO Class Selector</h1>
-        <p>Select tags to narrow down the roster.</p>
+        <p>Hover over a tag to read its requirements. Click to look for matches.</p>
     </header>
 
     <div class="container">
         <section class="filters-top">
-            <label class="filter-option">
-                <input type="checkbox" class="filter-checkbox" value="male"> Male
-            </label>
-            <label class="filter-option">
-                <input type="checkbox" class="filter-checkbox" value="female"> Female
-            </label>
+            <div class="filter-option-wrapper">
+                <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="male"> Male</label>
+            </div>
+            <div class="filter-option-wrapper">
+                <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="female"> Female</label>
+            </div>
 
-            <label class="filter-option">
-                <input type="checkbox" class="filter-checkbox" value="Melee"> Melee
-            </label>
-            <label class="filter-option">
-                <input type="checkbox" class="filter-checkbox" value="Ranged"> Ranged
-            </label>
-            <label class="filter-option">
-                <input type="checkbox" class="filter-checkbox" value="Fragger"> Fragger
-            </label>
-            <label class="filter-option">
-                <input type="checkbox" class="filter-checkbox" value="Utility"> Utility
-            </label>
-            <label class="filter-option">
-                <input type="checkbox" class="filter-checkbox" value="AOS"> AOS
-            </label>
-            <label class="filter-option">
-                <input type="checkbox" class="filter-checkbox" value="Bomber"> Bomber
-            </label>
-            <label class="filter-option">
-                <input type="checkbox" class="filter-checkbox" value="Fighter"> Fighter
-            </label>
-            <label class="filter-option">
-                <input type="checkbox" class="filter-checkbox" value="Kiter"> Kiter
-            </label>
-            <label class="filter-option">
-                <input type="checkbox" class="filter-checkbox" value="Dancer"> Dancer
-            </label>
+            <div class="filter-option-wrapper">
+                <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Melee"> Melee</label>
+            </div>
+            <div class="filter-option-wrapper">
+                <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Ranged"> Ranged</label>
+            </div>
+            <div class="filter-option-wrapper">
+                <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Fragger"> Fragger</label>
+            </div>
+            <div class="filter-option-wrapper">
+                <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Stormtrooper"> Stormtrooper</label>
+                <span class="tooltip-text">Can get 100 kills in siege, top 10 in wars</span>
+            </div>
+            <div class="filter-option-wrapper">
+                <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Special Force Commander"> Special Force Commander</label>
+                <span class="tooltip-text">Can get 180 kills in siege, top 3 in wars</span>
+            </div>
+            <div class="filter-option-wrapper">
+                <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Utility"> Utility</label>
+                <span class="tooltip-text">You serve a purpose few classes can provide</span>
+            </div>
+            <div class="filter-option-wrapper">
+                <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="AOS"> AOS</label>
+                <span class="tooltip-text">Can perform well in AOS</span>
+            </div>
+            <div class="filter-option-wrapper">
+                <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Kiter"> Kiter</label>
+                <span class="tooltip-text">Has to use distance to maintain safety</span>
+            </div>
+            <div class="filter-option-wrapper">
+                <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Dancer"> Dancer</label>
+                <span class="tooltip-text">Uses movement in between damage skills</span>
+            </div>
+            <div class="filter-option-wrapper">
+                <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Fighter"> Fighter</label>
+                <span class="tooltip-text">Movement and damage are packaged together</span>
+            </div>
+            <div class="filter-option-wrapper">
+                <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Bomber"> Bomber</label>
+                <span class="tooltip-text">Big engage, big damage drop</span>
+            </div>
+            <div class="filter-option-wrapper">
+                <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Victim"> Victim</label>
+                <span class="tooltip-text">Has to worry about dying as part of gameplay loop</span>
+            </div>
+            <div class="filter-option-wrapper">
+                <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Aggressor"> Aggressor</label>
+                <span class="tooltip-text">You dictate the fight</span>
+            </div>
+            <div class="filter-option-wrapper">
+                <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Doesn't Die"> Doesn't Die</label>
+                <span class="tooltip-text">Can have single digit deaths</span>
+            </div>
+            <div class="filter-option-wrapper">
+                <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Weapon"> Weapon</label>
+                <span class="tooltip-text">Weapon is meaningfully visible</span>
+            </div>
+            <div class="filter-option-wrapper">
+                <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Grab"> Grab</label>
+            </div>
         </section>
 
         <main class="class-grid" id="classGrid"></main>
     </div>
 
     <script>
-        // FIXED: Corrected array element definitions to eliminate syntax errors
+        // FIXED: Safely wrapped strings containing apostrophes with double-quotes to prevent unexpected parse breaks.
         const CLASSES = [
-            { name: 'Ranger', tags: ['female', 'Ranged', 'Special Force Commander', 'AOS', 'Kiter', 'Victim', 'Doesn't Die', 'Weapon', 'Grab'] },
-            { name: 'Sorceress', tags: ['female', 'Melee', 'Special Force Commander', 'Utility', 'AOS', 'Bomber', 'Dancer', 'Aggressor', 'Doesn't Die', 'Weapon'] },
-            { name: 'Valkyrie', tags: ['female', 'Melee', 'Stormtrooper', 'Utility', 'AOS', 'Bomber', 'Dancer', 'Aggressor', 'Doesn't Die', 'Weapon', 'Grab'] },
+            { name: 'Ranger', tags: ['female', 'Ranged', 'Special Force Commander', 'AOS', 'Kiter', 'Victim', "Doesn't Die", 'Weapon', 'Grab'] },
+            { name: 'Sorceress', tags: ['female', 'Melee', 'Special Force Commander', 'Utility', 'AOS', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die", 'Weapon'] },
+            { name: 'Valkyrie', tags: ['female', 'Melee', 'Stormtrooper', 'Utility', 'AOS', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die", 'Weapon', 'Grab'] },
             { name: 'Witch', tags: ['female', 'Melee', 'Ranged', 'Special Force Commander', 'Utility', 'AOS', 'Bomber', 'Kiter', 'Victim', 'Weapon'] },
-            { name: 'Mystic', tags: ['female', 'Melee', 'Utility', 'AOS', 'Fighter', 'Aggressor', 'Doesn't Die', 'Weapon', 'Grab'] },
-            { name: 'Lahn', tags: ['female', 'Melee', 'Stormtrooper', 'AOS', 'Bomber', 'Dancer', 'Aggressor', 'Doesn't Die', 'Weapon', 'Grab'] },
+            { name: 'Mystic', tags: ['female', 'Melee', 'Utility', 'AOS', 'Fighter', 'Aggressor', "Doesn't Die", 'Weapon', 'Grab'] },
+            { name: 'Lahn', tags: ['female', 'Melee', 'Stormtrooper', 'AOS', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die", 'Weapon', 'Grab'] },
             { name: 'Guardian', tags: ['female', 'Melee', 'Bomber', 'Fighter', 'Victim', 'Weapon', 'Grab'] },
-            { name: 'Sage', tags: ['male', 'Melee', 'Ranged', 'Special Force Commander', 'Bomber', 'Dancer', 'Aggressor', 'Doesn't Die', 'Weapon'] },
+            { name: 'Sage', tags: ['male', 'Melee', 'Ranged', 'Special Force Commander', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die", 'Weapon'] },
             { name: 'Drakania', tags: ['female', 'Melee', 'Stormtrooper', 'AOS', 'Bomber', 'Fighter', 'Aggressor', 'Weapon', 'Grab'] },
-            { name: 'Woosa', tags: ['female', 'Melee', 'Stormtrooper', 'AOS', 'Bomber', 'Dancer', 'Aggressor', 'Doesn't Die', 'Weapon'] },
-            { name: 'Maegu', tags: ['female', 'Melee', 'Stormtrooper', 'AOS', 'Bomber', 'Dancer', 'Aggressor', 'Doesn't Die'] },
-            { name: 'Scholar', tags: ['female', 'Melee', 'Utility', 'Fighter', 'Aggressor', 'Doesn't Die', 'Weapon', 'Grab'] },
+            { name: 'Woosa', tags: ['female', 'Melee', 'Stormtrooper', 'AOS', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die", 'Weapon'] },
+            { name: 'Maegu', tags: ['female', 'Melee', 'Stormtrooper', 'AOS', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die"] },
+            { name: 'Scholar', tags: ['female', 'Melee', 'Utility', 'Fighter', 'Aggressor', "Doesn't Die", 'Weapon', 'Grab'] },
             { name: 'Deadeye', tags: ['female', 'Melee', 'Bomber', 'Fighter', 'Aggressor', 'Weapon'] },
             { name: 'Seraph', tags: ['female', 'Melee', 'Fighter', 'Victim', 'Weapon', 'Grab'] }
         ];
@@ -209,7 +297,6 @@
             CLASSES.forEach(cls => {
                 const card = document.getElementById(`class-${normalizeName(cls.name)}`);
                 
-                // Class stays if it contains every single checked activeTag
                 const matchesAllFilters = activeTags.every(tag => cls.tags.includes(tag));
 
                 if (matchesAllFilters) {

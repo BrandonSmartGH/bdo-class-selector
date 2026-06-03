@@ -138,90 +138,60 @@
         /* Class Grid Container */
         .class-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
             gap: 25px;
             width: 100%;
             justify-content: center;
         }
 
-        /* 3D FLIP CARD ARCHITECTURE */
-        .class-card-container {
-            perspective: 1000px; /* Gives the 3D depth perspective */
-            min-height: 180px;
-            cursor: pointer;
-        }
-
+        /* Unified Class Card Layout */
         .class-card {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            border-radius: 12px;
-        }
-
-        /* JavaScript toggles this class on click */
-        .class-card.is-flipped {
-            transform: rotateY(180deg);
-        }
-
-        /* Base rule for both front and back layout faces */
-        .card-face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden; /* Hides reverse side during rotation */
-            border-radius: 12px;
+            background-color: var(--card-bg);
             border: 1px solid var(--border-color);
+            border-radius: 12px;
             box-sizing: border-box;
-            padding: 20px 15px;
+            padding: 24px 18px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            background-color: var(--card-bg);
+            justify-content: space-between;
+            min-height: 240px; /* Gives plenty of consistent room for content blocks */
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        /* Front Styling */
-        .card-front .class-name {
+        .class-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+        }
+
+        .class-name {
             font-size: 1.4rem;
             font-weight: 700;
             color: #1a202c;
-        }
-        
-        .card-front .hint-text {
-            font-size: 0.75rem;
-            color: #a0aec0;
-            margin-top: 8px;
+            margin-bottom: 14px;
         }
 
-        /* Back Styling */
-        .card-back {
-            transform: rotateY(180deg);
-            justify-content: space-between; /* Pushes content away cleanly */
-        }
-
+        /* Container keeping tags grouped neatly */
         .class-tags-container {
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
             justify-content: center;
-            overflow-y: auto;
-            max-height: 90px; /* Keeps tags bounded */
-            margin-bottom: 10px;
+            margin-bottom: 18px;
+            width: 100%;
         }
 
         .class-tag-pill {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             background-color: var(--tag-pill-bg);
             color: var(--tag-pill-text);
-            padding: 3px 8px;
-            border-radius: 4px;
+            padding: 4px 10px;
+            border-radius: 6px;
             font-weight: 500;
         }
 
-        /* YouTube Interactive Button */
+        /* Redesigned Button */
         .yt-link {
             display: inline-flex;
             align-items: center;
@@ -229,21 +199,23 @@
             background-color: var(--yt-red);
             color: #ffffff;
             text-decoration: none;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 600;
-            padding: 6px 14px;
+            padding: 8px 16px;
             border-radius: 20px;
             transition: background-color 0.2s;
-            width: 80%;
+            width: 85%;
             box-sizing: border-box;
+            text-align: center;
+            margin-top: auto; /* Pushes button strictly to bottom of flex layout */
         }
 
         .yt-link:hover {
             background-color: #cc0000;
         }
 
-        /* Structural removal logic hides container wrapper */
-        .class-card-container.eliminated {
+        /* Structural filtration hiding rule */
+        .class-card.eliminated {
             display: none;
         }
     </style>
@@ -252,11 +224,12 @@
 
     <header>
         <h1>BDO Class Selector</h1>
-        <p>Hover over tags to see details. Click/Tap any class card to flip it and view tags or guide links.</p>
+        <p>Hover over criteria tags to see filter requirements. Click "Watch PvP" to see class gameplay.</p>
     </header>
 
     <div class="container">
         <section class="filters-top">
+            <!-- Core Gender Tags -->
             <div class="filter-option-wrapper">
                 <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="male"> Male</label>
             </div>
@@ -264,6 +237,7 @@
                 <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="female"> Female</label>
             </div>
 
+            <!-- Style Tags -->
             <div class="filter-option-wrapper">
                 <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Melee"> Melee</label>
             </div>
@@ -271,6 +245,7 @@
                 <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Ranged"> Ranged</label>
             </div>
 
+            <!-- Performance Tier filters -->
             <div class="filter-option-wrapper">
                 <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Stormtrooper"> Stormtrooper</label>
                 <span class="tooltip-text">Can get 100 kills in siege, top 10 in wars</span>
@@ -280,6 +255,7 @@
                 <span class="tooltip-text">Can get 180 kills in siege, top 3 in wars</span>
             </div>
 
+            <!-- Playstyle Tags -->
             <div class="filter-option-wrapper">
                 <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Utility"> Utility</label>
                 <span class="tooltip-text">You serve a purpose few classes can provide</span>
@@ -329,7 +305,6 @@
     </div>
 
     <script>
-        // Data Array - Added a placeholder "yt" field to every item so you can add links easily.
         const CLASSES = [
             { name: 'Ranger', yt: 'https://youtube.com', tags: ['female', 'Ranged', 'Special Force Commander', 'Stormtrooper', 'AOS', 'Kiter', 'Victim', "Doesn't Die", 'Weapon', 'Grab'] },
             { name: 'Sorceress', yt: 'https://youtube.com', tags: ['female', 'Melee', 'Special Force Commander', 'Stormtrooper', 'Utility', 'AOS', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die", 'Weapon'] },
@@ -358,35 +333,17 @@
                 const tagPillsHtml = cls.tags.map(tag => `<span class="class-tag-pill">${tag}</span>`).join('');
                 
                 return `
-                    <div class="class-card-container" id="container-${normalizeName(cls.name)}" onclick="toggleCardFlip(this, event)">
-                        <div class="class-card">
-                            <div class="card-face card-front">
-                                <div class="class-name">${cls.name}</div>
-                                <div class="hint-text">Click to view</div>
-                            </div>
-                            <div class="card-face card-back">
-                                <div class="class-tags-container">
-                                    ${tagPillsHtml}
-                                </div>
-                                <a href="${cls.yt}" target="_blank" class="yt-link" onclick="preventFlipOnLinkClick(event)">
-                                    YouTube Guide
-                                </a>
-                            </div>
+                    <div class="class-card" id="card-${normalizeName(cls.name)}">
+                        <div class="class-name">${cls.name}</div>
+                        <div class="class-tags-container">
+                            ${tagPillsHtml}
                         </div>
+                        <a href="${cls.yt}" target="_blank" class="yt-link">
+                            Watch PvP
+                        </a>
                     </div>
                 `;
             }).join('');
-        }
-
-        // Toggles flipped status when clicking anywhere on a card element
-        function toggleCardFlip(containerElement, event) {
-            const card = containerElement.querySelector('.class-card');
-            card.classList.toggle('is-flipped');
-        }
-
-        // Prevents the card from un-flipping itself when clicking the actual YouTube anchor link
-        function preventFlipOnLinkClick(event) {
-            event.stopPropagation();
         }
 
         function setupFilters() {
@@ -401,17 +358,13 @@
             const activeTags = Array.from(checkedBoxes).map(cb => cb.value);
 
             CLASSES.forEach(cls => {
-                const container = document.getElementById(`container-${normalizeName(cls.name)}`);
-                const card = container.querySelector('.class-card');
-                
+                const card = document.getElementById(`card-${normalizeName(cls.name)}`);
                 const matchesAllFilters = activeTags.every(tag => cls.tags.includes(tag));
 
                 if (matchesAllFilters) {
-                    container.classList.remove('eliminated');
+                    card.classList.remove('eliminated');
                 } else {
-                    container.classList.add('eliminated');
-                    // Automatically unflip cards that are hidden so they face front if unfiltered later
-                    card.classList.remove('is-flipped');
+                    card.classList.add('eliminated');
                 }
             });
         }

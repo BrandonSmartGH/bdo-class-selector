@@ -192,9 +192,6 @@
                 <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Ranged"> Ranged</label>
             </div>
             <div class="filter-option-wrapper">
-                <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Fragger"> Fragger</label>
-            </div>
-            <div class="filter-option-wrapper">
                 <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Stormtrooper"> Stormtrooper</label>
                 <span class="tooltip-text">Can get 100 kills in siege, top 10 in wars</span>
             </div>
@@ -253,14 +250,14 @@
     <script>
         // FIXED: Safely wrapped strings containing apostrophes with double-quotes to prevent unexpected parse breaks.
         const CLASSES = [
-            { name: 'Ranger', tags: ['female', 'Ranged', 'Special Force Commander', 'AOS', 'Kiter', 'Victim', "Doesn't Die", 'Weapon', 'Grab'] },
-            { name: 'Sorceress', tags: ['female', 'Melee', 'Special Force Commander', 'Utility', 'AOS', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die", 'Weapon'] },
+            { name: 'Ranger', tags: ['female', 'Ranged', 'Special Force Commander', 'Stormtrooper', 'AOS', 'Kiter', 'Victim', "Doesn't Die", 'Weapon', 'Grab'] },
+            { name: 'Sorceress', tags: ['female', 'Melee', 'Special Force Commander', 'Stormtrooper', 'Utility', 'AOS', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die", 'Weapon'] },
             { name: 'Valkyrie', tags: ['female', 'Melee', 'Stormtrooper', 'Utility', 'AOS', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die", 'Weapon', 'Grab'] },
-            { name: 'Witch', tags: ['female', 'Melee', 'Ranged', 'Special Force Commander', 'Utility', 'AOS', 'Bomber', 'Kiter', 'Victim', 'Weapon'] },
+            { name: 'Witch', tags: ['female', 'Melee', 'Ranged', 'Special Force Commander', 'Stormtrooper', 'Utility', 'AOS', 'Bomber', 'Kiter', 'Victim', 'Weapon'] },
             { name: 'Mystic', tags: ['female', 'Melee', 'Utility', 'AOS', 'Fighter', 'Aggressor', "Doesn't Die", 'Weapon', 'Grab'] },
             { name: 'Lahn', tags: ['female', 'Melee', 'Stormtrooper', 'AOS', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die", 'Weapon', 'Grab'] },
             { name: 'Guardian', tags: ['female', 'Melee', 'Bomber', 'Fighter', 'Victim', 'Weapon', 'Grab'] },
-            { name: 'Sage', tags: ['male', 'Melee', 'Ranged', 'Special Force Commander', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die", 'Weapon'] },
+            { name: 'Sage', tags: ['male', 'Melee', 'Ranged', 'Special Force Commander', 'Stormtrooper', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die", 'Weapon'] },
             { name: 'Drakania', tags: ['female', 'Melee', 'Stormtrooper', 'AOS', 'Bomber', 'Fighter', 'Aggressor', 'Weapon', 'Grab'] },
             { name: 'Woosa', tags: ['female', 'Melee', 'Stormtrooper', 'AOS', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die", 'Weapon'] },
             { name: 'Maegu', tags: ['female', 'Melee', 'Stormtrooper', 'AOS', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die"] },

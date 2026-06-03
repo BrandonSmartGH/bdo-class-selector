@@ -117,4 +117,166 @@
             /* Dynamic sizing for the flex items */
             width: 180px;
             padding: 24px 15px;
-            text
+            text-align: center;
+            
+            /* Animation transitions */
+            opacity: 1;
+            transform: scale(1);
+            visibility: visible;
+            transition: 
+                opacity 0.4s ease, 
+                transform 0.4s ease, 
+                width 0.4s ease, 
+                padding 0.4s ease,
+                margin 0.4s ease;
+            
+            /* Prevent content wrapping oddly during width collapse */
+            white-space: nowrap; 
+            overflow: hidden;
+        }
+
+        .class-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+        }
+
+        /* Smooth elimination state */
+        .class-card.eliminated {
+            opacity: 0;
+            transform: scale(0.7);
+            width: 0;
+            padding-left: 0;
+            padding-right: 0;
+            margin-left: -10px; /* Pulls neighboring grid items in smoothly */
+            margin-right: -10px;
+            border: none;
+            visibility: hidden;
+        }
+
+        .class-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1a202c;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>BDO Class Selector</h1>
+        <p>Filter down the roster to find your perfect match.</p>
+    </header>
+
+    <div class="container">
+        <section class="filters-top">
+            <div class="filter-group">
+                <h3>Gender</h3>
+                <div class="filter-options-container">
+                    <label class="filter-option">
+                        <input type="checkbox" class="filter-checkbox" data-category="gender" value="male"> Male
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" class="filter-checkbox" data-category="gender" value="female"> Female
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <main class="class-grid" id="classGrid">
+            </main>
+    </div>
+
+    <script>
+        const CLASSES = [
+            { name: 'Warrior', gender: 'male' },
+            { name: 'Ranger', gender: 'female' },
+            { name: 'Sorceress', gender: 'female' },
+            { name: 'Berserker', gender: 'male' },
+            { name: 'Tamer', gender: 'female' },
+            { name: 'Musa', gender: 'male' },
+            { name: 'Maehwa', gender: 'female' },
+            { name: 'Valkyrie', gender: 'female' },
+            { name: 'Kunoichi', gender: 'female' },
+            { name: 'Ninja', gender: 'male' },
+            { name: 'Wizard', gender: 'male' },
+            { name: 'Witch', gender: 'female' },
+            { name: 'Striker', gender: 'male' },
+            { name: 'Mystic', gender: 'female' },
+            { name: 'Archer', gender: 'male' },
+            { name: 'Lahn', gender: 'female' },
+            { name: 'Shai', gender: 'female' },
+            { name: 'Guardian', gender: 'female' },
+            { name: 'Hashashin', gender: 'male' },
+            { name: 'Nova', gender: 'female' },
+            { name: 'Sage', gender: 'male' },
+            { name: 'Corsair', gender: 'female' },
+            { name: 'Drakania', gender: 'female' },
+            { name: 'Woosa', gender: 'female' },
+            { name: 'Maegu', gender: 'female' },
+            { name: 'Scholar', gender: 'female' },
+            { name: 'Dosa', gender: 'male' }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderClasses();
+            setupFilters();
+        });
+
+        function renderClasses() {
+            const grid = document.getElementById('classGrid');
+            // REMOVED: The class tag markup inside the card layout strings
+            grid.innerHTML = CLASSES.map(cls => `
+                <div class="class-card" id="class-${normalizeName(cls.name)}">
+                    <div class="class-name">${cls.name}</div>
+                </div>
+            `).join('');
+        }
+
+        function setupFilters() {
+            const checkboxes = document.querySelectorAll('.filter-checkbox');
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', filterClasses);
+            });
+        }
+
+        function filterClasses() {
+            const checkboxes = document.querySelectorAll('.filter-checkbox:checked');
+            
+            const activeFilters = {};
+            checkboxes.forEach(cb => {
+                const category = cb.getAttribute('data-category');
+                const value = cb.value;
+                if (!activeFilters[category]) {
+                    activeFilters[category] = [];
+                }
+                activeFilters[category].push(value);
+            });
+
+            CLASSES.forEach(cls => {
+                const card = document.getElementById(`class-${normalizeName(cls.name)}`);
+                let isEliminated = false;
+
+                for (const category in activeFilters) {
+                    const allowedValues = activeFilters[category];
+                    const classValue = cls[category];
+
+                    if (!allowedValues.includes(classValue)) {
+                        isEliminated = true;
+                        break; 
+                    }
+                }
+
+                if (isEliminated) {
+                    card.classList.add('eliminated');
+                } else {
+                    card.classList.remove('eliminated');
+                }
+            });
+        }
+
+        function normalizeName(name) {
+            return name.toLowerCase().replace(/\s+/g, '-');
+        }
+    </script>
+</body>
+</html>

@@ -11,6 +11,8 @@
             --text-color: #2c3e50;
             --border-color: #e2e8f0;
             --tooltip-bg: #1a202c;
+            --tag-pill-bg: #edf2f7;
+            --tag-pill-text: #4a5568;
         }
 
         body {
@@ -105,7 +107,7 @@
             padding: 8px 12px;
             position: absolute;
             z-index: 10;
-            bottom: 125%; /* Positions tooltip directly above tag option */
+            bottom: 125%;
             left: 51%;
             transform: translateX(-50%);
             opacity: 0;
@@ -116,7 +118,6 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.15);
         }
 
-        /* Small structural arrow for tooltip block */
         .tooltip-text::after {
             content: "";
             position: absolute;
@@ -136,7 +137,7 @@
         /* Class Grid Container */
         .class-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 20px;
             width: 100%;
             justify-content: center;
@@ -150,22 +151,64 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.06);
             padding: 24px 15px;
             text-align: center;
-            transition: transform 0.2s;
-        }
-
-        .class-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
-        }
-
-        .class-card.eliminated {
-            display: none;
+            position: relative;
+            overflow: hidden;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .class-name {
             font-size: 1.2rem;
             font-weight: 600;
             color: #1a202c;
+            transition: transform 0.2s;
+        }
+
+        /* Class Hover Tags Container */
+        .class-hover-tags {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            max-height: 0;
+            transition: opacity 0.2s, visibility 0.2s, max-height 0.2s;
+        }
+
+        /* Individual mini-tag pills on the card */
+        .class-tag-pill {
+            font-size: 0.75rem;
+            background-color: var(--tag-pill-bg);
+            color: var(--tag-pill-text);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        /* Hover states to reveal your tags smoothly */
+        .class-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+        }
+
+        .class-card:hover .class-name {
+            transform: translateY(-4px);
+        }
+
+        .class-card:hover .class-hover-tags {
+            opacity: 1;
+            visibility: visible;
+            max-height: 200px; /* expands box container down to let tags breathe */
+        }
+
+        .class-card.eliminated {
+            display: none;
         }
     </style>
 </head>
@@ -173,7 +216,7 @@
 
     <header>
         <h1>BDO Class Selector</h1>
-        <p>Hover over a tag to read its requirements. Click to look for matches.</p>
+        <p>Hover over a tag to read its requirements. Hover over a class to view all its assigned tags.</p>
     </header>
 
     <div class="container">
@@ -191,6 +234,7 @@
             <div class="filter-option-wrapper">
                 <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Ranged"> Ranged</label>
             </div>
+
             <div class="filter-option-wrapper">
                 <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Stormtrooper"> Stormtrooper</label>
                 <span class="tooltip-text">Can get 100 kills in siege, top 10 in wars</span>
@@ -199,6 +243,7 @@
                 <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Special Force Commander"> Special Force Commander</label>
                 <span class="tooltip-text">Can get 180 kills in siege, top 3 in wars</span>
             </div>
+
             <div class="filter-option-wrapper">
                 <label class="filter-option"><input type="checkbox" class="filter-checkbox" value="Utility"> Utility</label>
                 <span class="tooltip-text">You serve a purpose few classes can provide</span>
@@ -248,7 +293,6 @@
     </div>
 
     <script>
-        // FIXED: Safely wrapped strings containing apostrophes with double-quotes to prevent unexpected parse breaks.
         const CLASSES = [
             { name: 'Ranger', tags: ['female', 'Ranged', 'Special Force Commander', 'Stormtrooper', 'AOS', 'Kiter', 'Victim', "Doesn't Die", 'Weapon', 'Grab'] },
             { name: 'Sorceress', tags: ['female', 'Melee', 'Special Force Commander', 'Stormtrooper', 'Utility', 'AOS', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die", 'Weapon'] },
@@ -271,13 +315,22 @@
             setupFilters();
         });
 
+        // UPDATED: Dynamically injects tag items directly into individual layout nodes
         function renderClasses() {
             const grid = document.getElementById('classGrid');
-            grid.innerHTML = CLASSES.map(cls => `
-                <div class="class-card" id="class-${normalizeName(cls.name)}">
-                    <div class="class-name">${cls.name}</div>
-                </div>
-            `).join('');
+            grid.innerHTML = CLASSES.map(cls => {
+                // Generate the inner string of tag pills dynamically
+                const tagPillsHtml = cls.tags.map(tag => `<span class="class-tag-pill">${tag}</span>`).join('');
+                
+                return `
+                    <div class="class-card" id="class-${normalizeName(cls.name)}">
+                        <div class="class-name">${cls.name}</div>
+                        <div class="class-hover-tags">
+                            ${tagPillsHtml}
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function setupFilters() {

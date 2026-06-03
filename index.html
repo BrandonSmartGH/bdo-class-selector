@@ -100,39 +100,22 @@
 
         /* Class Grid Container */
         .class-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 20px;
             width: 100%;
+            justify-content: center;
         }
 
-        /* Class Card Base & Animation Styles */
+        /* Class Card Base */
         .class-card {
             background-color: var(--card-bg);
             border-radius: 8px;
             border: 1px solid var(--border-color);
             box-shadow: 0 1px 3px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.06);
-            
-            /* Dynamic sizing for the flex items */
-            width: 180px;
             padding: 24px 15px;
             text-align: center;
-            
-            /* Animation transitions */
-            opacity: 1;
-            transform: scale(1);
-            visibility: visible;
-            transition: 
-                opacity 0.4s ease, 
-                transform 0.4s ease, 
-                width 0.4s ease, 
-                padding 0.4s ease,
-                margin 0.4s ease;
-            
-            /* Prevent content wrapping oddly during width collapse */
-            white-space: nowrap; 
-            overflow: hidden;
+            transition: transform 0.2s;
         }
 
         .class-card:hover {
@@ -140,17 +123,9 @@
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
         }
 
-        /* Smooth elimination state */
+        /* REMOVED ANIMATION: Instant removal via display none */
         .class-card.eliminated {
-            opacity: 0;
-            transform: scale(0.7);
-            width: 0;
-            padding-left: 0;
-            padding-right: 0;
-            margin-left: -10px; /* Pulls neighboring grid items in smoothly */
-            margin-right: -10px;
-            border: none;
-            visibility: hidden;
+            display: none;
         }
 
         .class-name {
@@ -224,7 +199,6 @@
 
         function renderClasses() {
             const grid = document.getElementById('classGrid');
-            // REMOVED: The class tag markup inside the card layout strings
             grid.innerHTML = CLASSES.map(cls => `
                 <div class="class-card" id="class-${normalizeName(cls.name)}">
                     <div class="class-name">${cls.name}</div>

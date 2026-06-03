@@ -70,7 +70,6 @@
             cursor: pointer;
             font-size: 1rem;
             user-select: none;
-            text-transform: capitalize;
         }
 
         .filter-option input {
@@ -130,24 +129,48 @@
             <label class="filter-option">
                 <input type="checkbox" class="filter-checkbox" value="female"> Female
             </label>
-            </section>
 
-        <main class="class-grid" id="classGrid">
-            </main>
+            <label class="filter-option">
+                <input type="checkbox" class="filter-checkbox" value="Melee"> Melee
+            </label>
+            <label class="filter-option">
+                <input type="checkbox" class="filter-checkbox" value="Ranged"> Ranged
+            </label>
+            <label class="filter-option">
+                <input type="checkbox" class="filter-checkbox" value="Fragger"> Fragger
+            </label>
+            <label class="filter-option">
+                <input type="checkbox" class="filter-checkbox" value="Utility"> Utility
+            </label>
+            <label class="filter-option">
+                <input type="checkbox" class="filter-checkbox" value="AOS"> AOS
+            </label>
+            <label class="filter-option">
+                <input type="checkbox" class="filter-checkbox" value="Bomber"> Bomber
+            </label>
+            <label class="filter-option">
+                <input type="checkbox" class="filter-checkbox" value="Fighter"> Fighter
+            </label>
+            <label class="filter-option">
+                <input type="checkbox" class="filter-checkbox" value="Kiter"> Kiter
+            </label>
+            <label class="filter-option">
+                <input type="checkbox" class="filter-checkbox" value="Dancer"> Dancer
+            </label>
+        </section>
+
+        <main class="class-grid" id="classGrid"></main>
     </div>
 
     <script>
-        /**
-         * ENGINEER NOTE: Flattened data array.
-         * Just add whatever string identifiers you want inside the tags array.
-         */
+        // FIXED: Corrected array element definitions to eliminate syntax errors
         const CLASSES = [
             { name: 'Ranger', tags: ['female', 'Ranged', 'Fragger', 'AOS', 'Kiter'] },
             { name: 'Sorceress', tags: ['female', 'Melee', 'Fragger', 'AOS', 'Dancer'] },
-            { name: 'Valkyrie', tags: ['female'], 'Melee', 'Utility', 'AOS', 'Bomber', 'Fighter'] },
+            { name: 'Valkyrie', tags: ['female', 'Melee', 'Utility', 'AOS', 'Bomber', 'Fighter'] },
             { name: 'Kunoichi', tags: ['female'] },
-            { name: 'Witch', tags: ['female'], 'Melee', 'Fragger', 'Utility', 'AOS', 'Bomber', 'Kiter'] },
-            { name: 'Mystic', tags: ['female'], 'Melee', 'Utility', 'AOS', 'Bomber', 'Fighter'] },
+            { name: 'Witch', tags: ['female', 'Melee', 'Fragger', 'Utility', 'AOS', 'Bomber', 'Kiter'] },
+            { name: 'Mystic', tags: ['female', 'Melee', 'Utility', 'AOS', 'Bomber', 'Fighter'] },
             { name: 'Lahn', tags: ['female'] },
             { name: 'Guardian', tags: ['female'] },
             { name: 'Nova', tags: ['female'] },
@@ -157,7 +180,7 @@
             { name: 'Maegu', tags: ['female'] },
             { name: 'Scholar', tags: ['female'] },
             { name: 'Deadeye', tags: ['female'] },
-            { name: 'Seraph', tags: ['female'] },
+            { name: 'Seraph', tags: ['female'] }
         ];
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -181,19 +204,14 @@
             });
         }
 
-        /**
-         * Updated Logic: Array intersection
-         * A class remains visible only if it contains ALL selected tags.
-         */
         function filterClasses() {
-            // Get values of all checked boxes as an array of strings
             const checkedBoxes = document.querySelectorAll('.filter-checkbox:checked');
             const activeTags = Array.from(checkedBoxes).map(cb => cb.value);
 
             CLASSES.forEach(cls => {
                 const card = document.getElementById(`class-${normalizeName(cls.name)}`);
                 
-                // If there are active tags, verify that every single active tag exists in this class's tag list
+                // Class stays if it contains every single checked activeTag
                 const matchesAllFilters = activeTags.every(tag => cls.tags.includes(tag));
 
                 if (matchesAllFilters) {

@@ -58,27 +58,7 @@
             width: 100%;
             box-sizing: border-box;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .filter-group h3 {
-            margin: 0;
-            font-size: 1.1rem;
-            color: #1a202c;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .filter-options-container {
-            display: flex;
+            flex-wrap: wrap;
             justify-content: center;
             gap: 24px;
         }
@@ -90,6 +70,7 @@
             cursor: pointer;
             font-size: 1rem;
             user-select: none;
+            text-transform: capitalize;
         }
 
         .filter-option input {
@@ -123,7 +104,6 @@
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
         }
 
-        /* REMOVED ANIMATION: Instant removal via display none */
         .class-card.eliminated {
             display: none;
         }
@@ -139,57 +119,45 @@
 
     <header>
         <h1>BDO Class Selector</h1>
-        <p>Filter down the roster to find your perfect match.</p>
+        <p>Select tags to narrow down the roster.</p>
     </header>
 
     <div class="container">
         <section class="filters-top">
-            <div class="filter-group">
-                <h3>Gender</h3>
-                <div class="filter-options-container">
-                    <label class="filter-option">
-                        <input type="checkbox" class="filter-checkbox" data-category="gender" value="male"> Male
-                    </label>
-                    <label class="filter-option">
-                        <input type="checkbox" class="filter-checkbox" data-category="gender" value="female"> Female
-                    </label>
-                </div>
-            </div>
-        </section>
+            <label class="filter-option">
+                <input type="checkbox" class="filter-checkbox" value="male"> Male
+            </label>
+            <label class="filter-option">
+                <input type="checkbox" class="filter-checkbox" value="female"> Female
+            </label>
+            </section>
 
         <main class="class-grid" id="classGrid">
             </main>
     </div>
 
     <script>
+        /**
+         * ENGINEER NOTE: Flattened data array.
+         * Just add whatever string identifiers you want inside the tags array.
+         */
         const CLASSES = [
-            { name: 'Warrior', gender: 'male' },
-            { name: 'Ranger', gender: 'female' },
-            { name: 'Sorceress', gender: 'female' },
-            { name: 'Berserker', gender: 'male' },
-            { name: 'Tamer', gender: 'female' },
-            { name: 'Musa', gender: 'male' },
-            { name: 'Maehwa', gender: 'female' },
-            { name: 'Valkyrie', gender: 'female' },
-            { name: 'Kunoichi', gender: 'female' },
-            { name: 'Ninja', gender: 'male' },
-            { name: 'Wizard', gender: 'male' },
-            { name: 'Witch', gender: 'female' },
-            { name: 'Striker', gender: 'male' },
-            { name: 'Mystic', gender: 'female' },
-            { name: 'Archer', gender: 'male' },
-            { name: 'Lahn', gender: 'female' },
-            { name: 'Shai', gender: 'female' },
-            { name: 'Guardian', gender: 'female' },
-            { name: 'Hashashin', gender: 'male' },
-            { name: 'Nova', gender: 'female' },
-            { name: 'Sage', gender: 'male' },
-            { name: 'Corsair', gender: 'female' },
-            { name: 'Drakania', gender: 'female' },
-            { name: 'Woosa', gender: 'female' },
-            { name: 'Maegu', gender: 'female' },
-            { name: 'Scholar', gender: 'female' },
-            { name: 'Dosa', gender: 'male' }
+            { name: 'Ranger', tags: ['female', 'Ranged', 'Fragger', 'AOS', 'Kiter'] },
+            { name: 'Sorceress', tags: ['female', 'Melee', 'Fragger', 'AOS', 'Dancer'] },
+            { name: 'Valkyrie', tags: ['female'], 'Melee', 'Utility', 'AOS', 'Bomber', 'Fighter'] },
+            { name: 'Kunoichi', tags: ['female'] },
+            { name: 'Witch', tags: ['female'], 'Melee', 'Fragger', 'Utility', 'AOS', 'Bomber', 'Kiter'] },
+            { name: 'Mystic', tags: ['female'], 'Melee', 'Utility', 'AOS', 'Bomber', 'Fighter'] },
+            { name: 'Lahn', tags: ['female'] },
+            { name: 'Guardian', tags: ['female'] },
+            { name: 'Nova', tags: ['female'] },
+            { name: 'Sage', tags: ['male'] },
+            { name: 'Drakania', tags: ['female'] },
+            { name: 'Woosa', tags: ['female'] },
+            { name: 'Maegu', tags: ['female'] },
+            { name: 'Scholar', tags: ['female'] },
+            { name: 'Deadeye', tags: ['female'] },
+            { name: 'Seraph', tags: ['female'] },
         ];
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -213,37 +181,25 @@
             });
         }
 
+        /**
+         * Updated Logic: Array intersection
+         * A class remains visible only if it contains ALL selected tags.
+         */
         function filterClasses() {
-            const checkboxes = document.querySelectorAll('.filter-checkbox:checked');
-            
-            const activeFilters = {};
-            checkboxes.forEach(cb => {
-                const category = cb.getAttribute('data-category');
-                const value = cb.value;
-                if (!activeFilters[category]) {
-                    activeFilters[category] = [];
-                }
-                activeFilters[category].push(value);
-            });
+            // Get values of all checked boxes as an array of strings
+            const checkedBoxes = document.querySelectorAll('.filter-checkbox:checked');
+            const activeTags = Array.from(checkedBoxes).map(cb => cb.value);
 
             CLASSES.forEach(cls => {
                 const card = document.getElementById(`class-${normalizeName(cls.name)}`);
-                let isEliminated = false;
+                
+                // If there are active tags, verify that every single active tag exists in this class's tag list
+                const matchesAllFilters = activeTags.every(tag => cls.tags.includes(tag));
 
-                for (const category in activeFilters) {
-                    const allowedValues = activeFilters[category];
-                    const classValue = cls[category];
-
-                    if (!allowedValues.includes(classValue)) {
-                        isEliminated = true;
-                        break; 
-                    }
-                }
-
-                if (isEliminated) {
-                    card.classList.add('eliminated');
-                } else {
+                if (matchesAllFilters) {
                     card.classList.remove('eliminated');
+                } else {
+                    card.classList.add('eliminated');
                 }
             });
         }

@@ -13,6 +13,7 @@
             --tooltip-bg: #1a202c;
             --tag-pill-bg: #edf2f7;
             --tag-pill-text: #4a5568;
+            --yt-red: #ff0000;
         }
 
         body {
@@ -137,77 +138,112 @@
         /* Class Grid Container */
         .class-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 25px;
             width: 100%;
             justify-content: center;
         }
 
-        /* Class Card Base */
+        /* 3D FLIP CARD ARCHITECTURE */
+        .class-card-container {
+            perspective: 1000px; /* Gives the 3D depth perspective */
+            min-height: 180px;
+            cursor: pointer;
+        }
+
         .class-card {
-            background-color: var(--card-bg);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.06);
-            padding: 24px 15px;
-            text-align: center;
+            width: 100%;
+            height: 100%;
             position: relative;
-            overflow: hidden;
-            min-height: 80px;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border-radius: 12px;
+        }
+
+        /* JavaScript toggles this class on click */
+        .class-card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        /* Base rule for both front and back layout faces */
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden; /* Hides reverse side during rotation */
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-sizing: border-box;
+            padding: 20px 15px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            transition: transform 0.2s, box-shadow 0.2s;
+            justify-content: center;
+            background-color: var(--card-bg);
         }
 
-        .class-name {
-            font-size: 1.2rem;
-            font-weight: 600;
+        /* Front Styling */
+        .card-front .class-name {
+            font-size: 1.4rem;
+            font-weight: 700;
             color: #1a202c;
-            transition: transform 0.2s;
+        }
+        
+        .card-front .hint-text {
+            font-size: 0.75rem;
+            color: #a0aec0;
+            margin-top: 8px;
         }
 
-        /* Class Hover Tags Container */
-        .class-hover-tags {
-            margin-top: 12px;
+        /* Back Styling */
+        .card-back {
+            transform: rotateY(180deg);
+            justify-content: space-between; /* Pushes content away cleanly */
+        }
+
+        .class-tags-container {
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
             justify-content: center;
-            opacity: 0;
-            visibility: hidden;
-            max-height: 0;
-            transition: opacity 0.2s, visibility 0.2s, max-height 0.2s;
+            overflow-y: auto;
+            max-height: 90px; /* Keeps tags bounded */
+            margin-bottom: 10px;
         }
 
-        /* Individual mini-tag pills on the card */
         .class-tag-pill {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             background-color: var(--tag-pill-bg);
             color: var(--tag-pill-text);
-            padding: 2px 8px;
+            padding: 3px 8px;
             border-radius: 4px;
             font-weight: 500;
         }
 
-        /* Hover states to reveal your tags smoothly */
-        .class-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+        /* YouTube Interactive Button */
+        .yt-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--yt-red);
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 20px;
+            transition: background-color 0.2s;
+            width: 80%;
+            box-sizing: border-box;
         }
 
-        .class-card:hover .class-name {
-            transform: translateY(-4px);
+        .yt-link:hover {
+            background-color: #cc0000;
         }
 
-        .class-card:hover .class-hover-tags {
-            opacity: 1;
-            visibility: visible;
-            max-height: 200px; /* expands box container down to let tags breathe */
-        }
-
-        .class-card.eliminated {
+        /* Structural removal logic hides container wrapper */
+        .class-card-container.eliminated {
             display: none;
         }
     </style>
@@ -216,7 +252,7 @@
 
     <header>
         <h1>BDO Class Selector</h1>
-        <p>Hover over a tag to read its requirements. Hover over a class to view all its assigned tags.</p>
+        <p>Hover over tags to see details. Click/Tap any class card to flip it and view tags or guide links.</p>
     </header>
 
     <div class="container">
@@ -293,21 +329,22 @@
     </div>
 
     <script>
+        // Data Array - Added a placeholder "yt" field to every item so you can add links easily.
         const CLASSES = [
-            { name: 'Ranger', tags: ['female', 'Ranged', 'Special Force Commander', 'Stormtrooper', 'AOS', 'Kiter', 'Victim', "Doesn't Die", 'Weapon', 'Grab'] },
-            { name: 'Sorceress', tags: ['female', 'Melee', 'Special Force Commander', 'Stormtrooper', 'Utility', 'AOS', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die", 'Weapon'] },
-            { name: 'Valkyrie', tags: ['female', 'Melee', 'Stormtrooper', 'Utility', 'AOS', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die", 'Weapon', 'Grab'] },
-            { name: 'Witch', tags: ['female', 'Melee', 'Ranged', 'Special Force Commander', 'Stormtrooper', 'Utility', 'AOS', 'Bomber', 'Kiter', 'Victim', 'Weapon'] },
-            { name: 'Mystic', tags: ['female', 'Melee', 'Utility', 'AOS', 'Fighter', 'Aggressor', "Doesn't Die", 'Weapon', 'Grab'] },
-            { name: 'Lahn', tags: ['female', 'Melee', 'Stormtrooper', 'AOS', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die", 'Weapon', 'Grab'] },
-            { name: 'Guardian', tags: ['female', 'Melee', 'Bomber', 'Fighter', 'Victim', 'Weapon', 'Grab'] },
-            { name: 'Sage', tags: ['male', 'Melee', 'Ranged', 'Special Force Commander', 'Stormtrooper', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die", 'Weapon'] },
-            { name: 'Drakania', tags: ['female', 'Melee', 'Stormtrooper', 'AOS', 'Bomber', 'Fighter', 'Aggressor', 'Weapon', 'Grab'] },
-            { name: 'Woosa', tags: ['female', 'Melee', 'Stormtrooper', 'AOS', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die", 'Weapon'] },
-            { name: 'Maegu', tags: ['female', 'Melee', 'Stormtrooper', 'AOS', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die"] },
-            { name: 'Scholar', tags: ['female', 'Melee', 'Utility', 'Fighter', 'Aggressor', "Doesn't Die", 'Weapon', 'Grab'] },
-            { name: 'Deadeye', tags: ['female', 'Melee', 'Bomber', 'Fighter', 'Aggressor', 'Weapon'] },
-            { name: 'Seraph', tags: ['female', 'Melee', 'Fighter', 'Victim', 'Weapon', 'Grab'] }
+            { name: 'Ranger', yt: 'https://youtube.com', tags: ['female', 'Ranged', 'Special Force Commander', 'Stormtrooper', 'AOS', 'Kiter', 'Victim', "Doesn't Die", 'Weapon', 'Grab'] },
+            { name: 'Sorceress', yt: 'https://youtube.com', tags: ['female', 'Melee', 'Special Force Commander', 'Stormtrooper', 'Utility', 'AOS', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die", 'Weapon'] },
+            { name: 'Valkyrie', yt: 'https://youtube.com', tags: ['female', 'Melee', 'Stormtrooper', 'Utility', 'AOS', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die", 'Weapon', 'Grab'] },
+            { name: 'Witch', yt: 'https://youtube.com', tags: ['female', 'Melee', 'Ranged', 'Special Force Commander', 'Stormtrooper', 'Utility', 'AOS', 'Bomber', 'Kiter', 'Victim', 'Weapon'] },
+            { name: 'Mystic', yt: 'https://youtube.com', tags: ['female', 'Melee', 'Utility', 'AOS', 'Fighter', 'Aggressor', "Doesn't Die", 'Weapon', 'Grab'] },
+            { name: 'Lahn', yt: 'https://youtube.com', tags: ['female', 'Melee', 'Stormtrooper', 'AOS', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die", 'Weapon', 'Grab'] },
+            { name: 'Guardian', yt: 'https://youtube.com', tags: ['female', 'Melee', 'Bomber', 'Fighter', 'Victim', 'Weapon', 'Grab'] },
+            { name: 'Sage', yt: 'https://youtube.com', tags: ['male', 'Melee', 'Ranged', 'Special Force Commander', 'Stormtrooper', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die", 'Weapon'] },
+            { name: 'Drakania', yt: 'https://youtube.com', tags: ['female', 'Melee', 'Stormtrooper', 'AOS', 'Bomber', 'Fighter', 'Aggressor', 'Weapon', 'Grab'] },
+            { name: 'Woosa', yt: 'https://youtube.com', tags: ['female', 'Melee', 'Stormtrooper', 'AOS', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die", 'Weapon'] },
+            { name: 'Maegu', yt: 'https://youtube.com', tags: ['female', 'Melee', 'Stormtrooper', 'AOS', 'Bomber', 'Dancer', 'Aggressor', "Doesn't Die"] },
+            { name: 'Scholar', yt: 'https://youtube.com', tags: ['female', 'Melee', 'Utility', 'Fighter', 'Aggressor', "Doesn't Die", 'Weapon', 'Grab'] },
+            { name: 'Deadeye', yt: 'https://youtube.com', tags: ['female', 'Melee', 'Bomber', 'Fighter', 'Aggressor', 'Weapon'] },
+            { name: 'Seraph', yt: 'https://youtube.com', tags: ['female', 'Melee', 'Fighter', 'Victim', 'Weapon', 'Grab'] }
         ];
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -315,22 +352,41 @@
             setupFilters();
         });
 
-        // UPDATED: Dynamically injects tag items directly into individual layout nodes
         function renderClasses() {
             const grid = document.getElementById('classGrid');
             grid.innerHTML = CLASSES.map(cls => {
-                // Generate the inner string of tag pills dynamically
                 const tagPillsHtml = cls.tags.map(tag => `<span class="class-tag-pill">${tag}</span>`).join('');
                 
                 return `
-                    <div class="class-card" id="class-${normalizeName(cls.name)}">
-                        <div class="class-name">${cls.name}</div>
-                        <div class="class-hover-tags">
-                            ${tagPillsHtml}
+                    <div class="class-card-container" id="container-${normalizeName(cls.name)}" onclick="toggleCardFlip(this, event)">
+                        <div class="class-card">
+                            <div class="card-face card-front">
+                                <div class="class-name">${cls.name}</div>
+                                <div class="hint-text">Click to view</div>
+                            </div>
+                            <div class="card-face card-back">
+                                <div class="class-tags-container">
+                                    ${tagPillsHtml}
+                                </div>
+                                <a href="${cls.yt}" target="_blank" class="yt-link" onclick="preventFlipOnLinkClick(event)">
+                                    YouTube Guide
+                                </a>
+                            </div>
                         </div>
                     </div>
                 `;
             }).join('');
+        }
+
+        // Toggles flipped status when clicking anywhere on a card element
+        function toggleCardFlip(containerElement, event) {
+            const card = containerElement.querySelector('.class-card');
+            card.classList.toggle('is-flipped');
+        }
+
+        // Prevents the card from un-flipping itself when clicking the actual YouTube anchor link
+        function preventFlipOnLinkClick(event) {
+            event.stopPropagation();
         }
 
         function setupFilters() {
@@ -345,14 +401,17 @@
             const activeTags = Array.from(checkedBoxes).map(cb => cb.value);
 
             CLASSES.forEach(cls => {
-                const card = document.getElementById(`class-${normalizeName(cls.name)}`);
+                const container = document.getElementById(`container-${normalizeName(cls.name)}`);
+                const card = container.querySelector('.class-card');
                 
                 const matchesAllFilters = activeTags.every(tag => cls.tags.includes(tag));
 
                 if (matchesAllFilters) {
-                    card.classList.remove('eliminated');
+                    container.classList.remove('eliminated');
                 } else {
-                    card.classList.add('eliminated');
+                    container.classList.add('eliminated');
+                    // Automatically unflip cards that are hidden so they face front if unfiltered later
+                    card.classList.remove('is-flipped');
                 }
             });
         }
